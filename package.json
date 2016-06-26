@@ -1,0 +1,19 @@
+{
+  "name": "react-starter-kit",
+  "version": "1.0.0",
+  "description": "A general template project for react applications",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tilastokeskus/react-starter-kit.git"
+  },
+  "author": "Olavi Mustanoja",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tilastokeskus/react-starter-kit/issues"
+  },
+  "homepage": "https://github.com/tilastokeskus/react-starter-kit#readme"
+}
