@@ -37,9 +37,9 @@ webpackConfig.output = {
 webpackConfig.plugins = [
 	new webpack.DefinePlugin(config.globals),
 	new HtmlWebpackPlugin({
-		template: paths.static('index.html'),
+		template: paths.src('index.html'),
 		hash: false,
-		favicon: paths.static('favicon.ico'),
+		favicon: paths.src('static/favicon.ico'),
 		filename: 'index.html',
 		inject: 'body',
 		minify: {
@@ -88,7 +88,7 @@ webpackConfig.module.loaders = [
 ];
 
 webpackConfig.sassLoader = {
-	includePaths: paths.static('styles')
+	includePaths: paths.src('static/styles')
 };
 
 webpackConfig.module.loaders.push(

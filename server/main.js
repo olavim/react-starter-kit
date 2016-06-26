@@ -27,7 +27,7 @@ if (config.env === 'development') {
 	}));
 	app.use(webpackHotMiddleware(compiler));
 
-	app.use(express.static(paths.static()));
+	app.use(express.static(paths.src('static')));
 } else {
 	debug('Server is running in production environment');
 
