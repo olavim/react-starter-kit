@@ -1,4 +1,5 @@
 import webpack from 'webpack';
+import cssnano from 'cssnano';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import config from '../config';
 import _debug from 'debug';
@@ -19,14 +20,15 @@ const webpackConfig = {
 	module: {}
 };
 
-const APP_ENTRY_PATHS = [
+webpackConfig.entry = [
 	'babel-polyfill',
-	paths.src('app.js')
+	paths.src('index.js')
 ];
 
-webpackConfig.entry = __DEV__
-	? APP_ENTRY_PATHS.concat(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`)
-	: APP_ENTRY_PATHS;
+if (__DEV__) {
+	// add HMR entry
+	webpackConfig.entry.push(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`);
+}
 
 webpackConfig.output = {
 	filename: `[name].[${config.compiler_hash_type}].js`,
@@ -42,9 +44,7 @@ webpackConfig.plugins = [
 		favicon: paths.src('static/favicon.ico'),
 		filename: 'index.html',
 		inject: 'body',
-		minify: {
-			collapseWhitespace: true
-		}
+		minify: {collapseWhitespace: true}
 	})
 ];
 
@@ -78,22 +78,55 @@ webpackConfig.module.loaders = [
 			cacheDirectory: true,
 			plugins: ['transform-runtime'],
 			presets: ['es2015', 'react', 'stage-1'],
-			env: {
-				production: {
-					presets: ['react-optimize']
-				}
-			}
+			env: {production: {presets: ['react-optimize']}}
 		}
 	}
 ];
 
+const BASE_CSS_LOADER = 'css?sourceMap&-minimize';
+
+webpackConfig.module.loaders.push({
+	test: /\.scss$/,
+	loaders: [
+		'style',
+		BASE_CSS_LOADER,
+		'postcss',
+		'sass?sourceMap'
+	]
+});
+
+webpackConfig.module.loaders.push({
+	test: /\.css$/,
+	loaders: [
+		'style',
+		BASE_CSS_LOADER,
+		'postcss'
+	]
+});
+
 webpackConfig.sassLoader = {
-	includePaths: paths.src('static/styles')
+	includePaths: paths.src('styles')
 };
 
+webpackConfig.postcss = [
+	cssnano({
+		autoprefixer: {
+			add: true,
+			remove: true,
+			browsers: ['last 2 versions']
+		},
+		discardComments: {removeAll: true},
+		discardUnused: false,
+		mergeIdents: false,
+		reduceIdents: false,
+		safe: true,
+		sourcemap: true
+	})
+];
+
 webpackConfig.module.loaders.push(
-	{ test: /\.svg(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
-	{ test: /\.(png|jpg)$/, loader: 'url?limit=8192' }
+	{test: /\.svg(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml'},
+	{test: /\.(png|jpg)$/, loader: 'url?limit=8192'}
 );
 
 export default webpackConfig
